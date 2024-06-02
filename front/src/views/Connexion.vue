@@ -1,0 +1,28 @@
+<template>
+  <div class="flex w-full p-6 justify-center items-center flex-col h-dvh bg-black">
+    <div class="widget w-full flex-col flex justify-center items-center gap-4 bg-neutral-900 p-6 rounded">
+      <h1 class="text-4xl text-white">Plume</h1>
+      <hr class="border w-full flex border-zinc-800 my-4">
+      <input type="email" name="email" id="email" placeholder="Email" required class="flex w-full outline-0 p-4 rounded">
+      <input type="password" name="password" id="password" placeholder="Mot de passe" required class="flex w-full outline-0 p-4 rounded">
+      <button class="bg-emerald-500 flex p-4 w-full items-center justify-center text-white rounded">Connexion</button>
+      <a href="/creation-de-compte" class="text-white hover:underline">Vous n'avez pas de compte ?</a>
+    </div>
+  </div>
+</template>
+
+<script>
+import Test from '@/components/Parametres.vue';
+
+export default {
+  name: 'connexion',
+  components: {
+  }
+}
+</script>
+
+<style scoped>
+.widget{
+  max-width: 450px;
+}
+</style>
