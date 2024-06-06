@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import Test from '@/components/Parametres.vue';
-
 export default {
   name: 'connexion',
   components: {
