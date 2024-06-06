@@ -1,5 +1,5 @@
 <template>
-  <Creer></Creer>
+<!--  <Creer></Creer>-->
 <!--  <Supprimer></Supprimer>-->
   <Parametres v-if="showParametres"></Parametres>
   <div class="flex w-full p-6 flex-col h-dvh bg-black gap-2 relative items-center">
@@ -9,7 +9,7 @@
     </nav>
     <hr class="w-full flex border-zinc-800">
     <div class="tasks flex w-full flex-col gap-2 mt-2 max-w-screen-lg overflow-y-auto overflow-x-hidden">
-<!--      <small class="text-white flex w-full items-center justify-center">Vous n'avez pas de tâche</small>-->
+      <small class="text-white flex w-full items-center justify-center">Vous n'avez pas de tâche</small>
       <small class="text-white font-black">Sport</small>
       <label for="check" class="task flex w-full bg-neutral-900 px-6 p-2 rounded items-center gap-4 text-white min-h-16">
         <input type="checkbox" name="check" id="check" class="flex w-5 h-5" checked>
@@ -67,7 +67,16 @@ export default {
   methods: {
     toggleParametres() {
       this.showParametres = !this.showParametres;
+    },
+    checkToken() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/';
+      }
     }
+  },
+  created() {
+    this.checkToken();
   }
 }
 </script>

@@ -1,10 +1,10 @@
 const mysql = require('mysql');
 
 const db = mysql.createConnection({
-    host: '',
-    user: '',
+    host: 'localhost',
+    user: 'root',
     password: '',
-    database: ''
+    database: 'plumebdd'
 });
 
 // Connect to the database
