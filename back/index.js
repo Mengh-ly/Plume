@@ -21,6 +21,16 @@ app.use('/api/register', register);
 const task = require('./routes/task/task');
 app.use('/api/task', task);
 
+const taskCheckbox = require('./routes/task/checkbox');
+app.use('/api/taskcheckbox', taskCheckbox);
+
+const userGetData = require('./routes/user/user');
+app.use('/api/user', userGetData);
+
+const deleteTask = require('./routes/task/delete');
+app.use('/api/delete', deleteTask);
+
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

@@ -9,6 +9,7 @@
     <div class="widget p-6 rounded bg-neutral-900 border-neutral-800 border flex flex-col w-full gap-4">
       <h1 class="text-white text-xl">Confirmation</h1>
       <button class="bg-red-500 flex p-4 w-full items-center justify-center text-white rounded">Supprimer</button>
+      <a href="/mon-espace" class="text-white flex w-full items-center justify-center">Annuler</a>
     </div>
   </div>
   <div class="flex w-full h-dvh fixed z-10"></div>
