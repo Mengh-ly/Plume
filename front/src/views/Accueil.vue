@@ -18,7 +18,7 @@
         <div v-for="tache in dossier.taches" :key="tache.idTache">
           <label class="task flex w-full bg-neutral-900 px-6 p-2 rounded items-center gap-4 justify-between text-white min-h-16">
             <div class="flex items-center gap-4">
-              <input type="checkbox" :checked="tache.statut === 1" class="flex w-5 h-5" @change="toggleTaskStatus(tache)">
+              <input type="checkbox" v-model="tache.selected" @change="handleTaskSelection(tache)" class="flex w-5 h-5">
               <span>{{ tache.nomTache }}</span>
             </div>
             <span>{{ tache.joursRestants }} jour(s)</span>
@@ -30,7 +30,7 @@
     </div>
     <div class="btn flex gap-8 items-center justify-center fixed bottom-0 w-full mb-12 left-0 ">
       <button class="text-white p-4 bg-emerald-500 rounded items-center justify-center w-full">Créer</button>
-      <button class="text-white p-4 bg-red-500 rounded items-center justify-center w-full">Supprimer</button>
+      <button class="text-white p-4 bg-red-500 rounded items-center justify-center w-full" @click="deleteTasks">Supprimer</button>
     </div>
 </template>
 
@@ -50,7 +50,6 @@ export default {
   data() {
     return {
       showParametres: false,
-      // showDelete: false,
       dossiers: []
     };
   },
@@ -58,13 +57,9 @@ export default {
     toggleParametres() {
       this.showParametres = !this.showParametres;
     },
-    // toggleDelete() {
-    //   this.showDelete = !this.showDelete;
-    // },
     checkToken() {
       const token = localStorage.getItem('token');
       if (!token) {
-        // Utilisation de vue-router pour la redirection sans rechargement
         this.$router.push('/');
       }
     },
@@ -73,22 +68,20 @@ export default {
         const token = localStorage.getItem('token');
         const response = await axios.post('http://localhost:3001/api/task', { token });
         this.dossiers = response.data;
-
-        // Calculer les jours restants pour chaque tâche
         this.dossiers.forEach(dossier => {
           dossier.taches.forEach(tache => {
             tache.joursRestants = this.calculateDaysLeft(tache.dateLimite);
+            tache.selected = tache.statut === 1; // Initialiser selected
           });
         });
       } catch (error) {
         console.error('Error fetching tasks:', error);
-        // Afficher un message d'erreur à l'utilisateur si nécessaire
       }
     },
-    async toggleTaskStatus(tache) {
+    async handleTaskSelection(tache) {
       try {
         const token = localStorage.getItem('token');
-        const newStatus = tache.statut === 1 ? 0 : 1;
+        const newStatus = tache.selected ? 1 : 0;
         const response = await axios.post('http://localhost:3001/api/taskcheckbox', {
           token,
           idTache: tache.idTache,
@@ -99,7 +92,32 @@ export default {
         }
       } catch (error) {
         console.error('Error toggling task status:', error);
-        // Afficher un message d'erreur à l'utilisateur si nécessaire
+      }
+    },
+    async deleteTasks() {
+      try {
+        const token = localStorage.getItem('token');
+        const selectedTasks = [];
+        this.dossiers.forEach(dossier => {
+          dossier.taches.forEach(tache => {
+            if (tache.selected) {
+              selectedTasks.push(tache.idTache);
+            }
+          });
+        });
+
+        if (selectedTasks.length > 0) {
+          const response = await axios.post('http://localhost:3001/api/delete', {
+            token,
+            idTaches: selectedTasks
+          });
+          location.reload();
+          if (response.data.success) {
+            this.fetchTasks(); // Rafraîchir la liste des tâches après suppression
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting tasks:', error);
       }
     },
     calculateDaysLeft(dateLimite) {
@@ -120,7 +138,12 @@ export default {
 
 
 
+
 <style scoped>
+::-webkit-scrollbar {
+  width: 0px;
+}
+
 .btn button{
   max-width: 150px;
 }

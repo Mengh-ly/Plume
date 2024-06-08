@@ -30,6 +30,9 @@ app.use('/api/user', userGetData);
 const deleteTask = require('./routes/task/delete');
 app.use('/api/delete', deleteTask);
 
+const getFolder = require('./routes/folder/getFolder');
+app.use('/api/getfolder', getFolder);
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
