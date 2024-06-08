@@ -16,14 +16,32 @@ router.post('/', (req, res) => {
             return res.status(400).json({ error: 'Email déjà utilisé' });
         }
 
-        // L'email n'existe pas, procéder à l'insertion
+        // L'email n'existe pas, procéder à l'insertion de l'utilisateur
+        const token = generateToken();
         db.query(
             'INSERT INTO utilisateur(nom, prenom, email, mdp, token) VALUES (?, ?, ?, ?, ?)',
-            [nom, prenom, email, mdp, generateToken()],
+            [nom, prenom, email, mdp, token],
             (error, results) => {
-                res.json({
-                    message: 'Utilisateur créé avec succès'
-                });
+                if (error) {
+                    return res.status(500).json({ error: 'Erreur lors de la création de l\'utilisateur' });
+                }
+
+                const idUtilisateur = results.insertId;
+
+                // Insérer un dossier pour cet utilisateur
+                db.query(
+                    'INSERT INTO Dossier(nomDossier, idUtilisateur) VALUES (?, ?)',
+                    ['Aucun', idUtilisateur],
+                    (error, results) => {
+                        if (error) {
+                            return res.status(500).json({ error: 'Erreur lors de la création du dossier' });
+                        }
+
+                        res.json({
+                            message: 'Utilisateur créé avec succès'
+                        });
+                    }
+                );
             }
         );
     });

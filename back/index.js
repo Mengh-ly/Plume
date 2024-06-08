@@ -33,6 +33,12 @@ app.use('/api/delete', deleteTask);
 const getFolder = require('./routes/folder/getFolder');
 app.use('/api/getfolder', getFolder);
 
+const createTask = require('./routes/folder/createTask');
+app.use('/api/createtask', createTask);
+
+const createFolder = require('./routes/folder/createFolder');
+app.use('/api/createfolder', createFolder);
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

@@ -1,11 +1,12 @@
 <template>
-<!--  <Creer></Creer>-->
+  <Dossier v-if="showDossier"></Dossier>
+  <Creer v-if="showCreate"></Creer>
 <!--  <Supprimer v-if="showDelete"></Supprimer>-->
   <Parametres v-if="showParametres"></Parametres>
   <div class="flex w-full p-6 flex-col h-dvh bg-black gap-2 relative items-center">
     <nav class="flex w-full p-4 px-6 justify-between items-center">
       <h1 class="text-white">Plume</h1>
-      <h1 class="profil bg-emerald-500 text-white p-2 rounded-full cursor-pointer" @click="toggleParametres">HD</h1>
+      <h1 class="profil bg-emerald-500 text-white p-2 rounded-full cursor-pointer" @click="toggleParametres">{{ prenom.charAt(0) }}{{ nom.charAt(0) }}</h1>
     </nav>
     <hr class="w-full flex border-zinc-800">
     <div class="tasks flex w-full flex-col gap-2 mt-2 max-w-screen-lg overflow-y-auto overflow-x-hidden">
@@ -28,8 +29,9 @@
       </div>
     </div>
     </div>
-    <div class="btn flex gap-8 items-center justify-center fixed bottom-0 w-full mb-12 left-0 ">
-      <button class="text-white p-4 bg-emerald-500 rounded items-center justify-center w-full">Créer</button>
+    <div class="btn flex gap-4 items-center justify-center fixed bottom-0 w-full mb-12 left-0 ">
+      <button class="text-white p-4 bg-emerald-500 rounded items-center justify-center w-full" @click="toggleCreate">Créer</button>
+      <button class="text-white p-4 bg-emerald-500 rounded items-center justify-center w-full" @click="toggleDossier">Dossier</button>
       <button class="text-white p-4 bg-red-500 rounded items-center justify-center w-full" @click="deleteTasks">Supprimer</button>
     </div>
 </template>
@@ -39,10 +41,12 @@ import axios from 'axios';
 import Parametres from "@/components/Parametres.vue";
 import Creer from "@/components/Creer.vue";
 import Supprimer from "@/components/Supprimer.vue";
+import Dossier from "@/components/Dossier.vue";
 
 export default {
   name: 'Connexion',
   components: {
+    Dossier,
     Supprimer,
     Creer,
     Parametres
@@ -50,12 +54,22 @@ export default {
   data() {
     return {
       showParametres: false,
-      dossiers: []
+      showCreate: false,
+      showDossier: false,
+      dossiers: [],
+      prenom: '',
+      nom: ''
     };
   },
   methods: {
     toggleParametres() {
       this.showParametres = !this.showParametres;
+    },
+    toggleDossier() {
+      this.showDossier = !this.showDossier;
+    },
+    toggleCreate() {
+      this.showCreate = !this.showCreate;
     },
     checkToken() {
       const token = localStorage.getItem('token');
@@ -126,14 +140,27 @@ export default {
       const timeDiff = dateLimiteObj.getTime() - today.getTime();
       const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
       return diffDays;
+    },
+    async fetchUserData() {
+      try {
+        const token = localStorage.getItem('token'); // Assurez-vous que le token est stocké dans le localStorage
+        const response = await axios.post('http://localhost:3001/api/user', { token });
+        const userData = response.data;
+        this.prenom = userData.prenom;
+        this.nom = userData.nom;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
     }
   },
   created() {
     this.checkToken();
     this.fetchTasks();
+    this.fetchUserData();
   }
 };
 </script>
+
 
 
 
@@ -145,6 +172,6 @@ export default {
 }
 
 .btn button{
-  max-width: 150px;
+  max-width: 110px;
 }
 </style>

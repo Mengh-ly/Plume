@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db');
 
 router.post('/', (req, res) => {
-    const { token } = req.body;
+    const { token, nomDossier } = req.body;
 
     // Requête pour obtenir l'idUtilisateur à partir du token
     db.query('SELECT idUtilisateur FROM utilisateur WHERE token = ?', [token], (error, results) => {
@@ -20,22 +20,16 @@ router.post('/', (req, res) => {
 
         const userId = results[0].idUtilisateur;
 
-        // Requête pour obtenir les idDossier et nomDossier associés à l'idUtilisateur
-        db.query('SELECT nomDossier, idDossier FROM dossier WHERE idUtilisateur = ?', [userId], (error, dossierResults) => {
+        // Insertion de nomDossier dans la table Dossier
+        db.query('INSERT INTO Dossier (nomDossier, idUtilisateur) VALUES (?, ?)', [nomDossier, userId], (error, results) => {
             if (error) {
                 return res.status(500).json({
-                    message: 'Erreur de serveur'
+                    message: 'Erreur lors de la création du dossier'
                 });
             }
 
-            // Construction de la réponse attendue
-            const dossiers = dossierResults.map(dossier => ({
-                idDossier: dossier.idDossier,
-                nomDossier: dossier.nomDossier
-            }));
-
-            res.json({
-                dossiers: dossiers
+            return res.status(201).json({
+                message: 'Dossier créé avec succès'
             });
         });
     });
